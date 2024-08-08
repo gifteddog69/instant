@@ -15,7 +15,7 @@
     }
     .button {
       width: 70vw;
-      height: 33.12vw; /* Adjust the height to maintain the aspect ratio */
+      height: 33.12vw;
       background-image: url('unpressed.png');
       background-size: contain;
       background-repeat: no-repeat;
@@ -46,8 +46,18 @@
 
     function handleButtonRelease() {
       button.classList.remove('pressed');
-      audio.currentTime = 0;
-      audio.play();
+      playAudio();
+    }
+
+    function playAudio() {
+      // Check if the audio is already playing
+      if (audio.paused) {
+        // iOS requires user interaction to play audio
+        audio.currentTime = 0;
+        audio.play().catch(error => {
+          console.error('Error playing audio:', error);
+        });
+      }
     }
   </script>
 </body>
