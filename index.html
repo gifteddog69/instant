@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Instant Success</title>
   <style>
     body {
@@ -12,6 +12,7 @@
       height: 100vh;
       margin: 0;
       background-color: #ffd381;
+      touch-action: manipulation;
     }
     .button {
       width: 70vw;
@@ -22,6 +23,7 @@
       background-position: center;
       cursor: pointer;
       transition: background-image 0.2s ease-in-out;
+      -webkit-tap-highlight-color: transparent;
     }
     .button.pressed {
       background-image: url('pressed.png');
@@ -36,15 +38,23 @@
 
     // Add event listeners for both mouse and touch events
     button.addEventListener('mousedown', handleButtonPress);
-    button.addEventListener('touchstart', handleButtonPress);
+    button.addEventListener('touchstart', handleButtonPress, { passive: true });
     button.addEventListener('mouseup', handleButtonRelease);
     button.addEventListener('touchend', handleButtonRelease);
 
-    function handleButtonPress() {
+    function handleButtonPress(event) {
+      // Prevent default touch behavior (e.g., zooming, scrolling)
+      if (event.type === 'touchstart') {
+        event.preventDefault();
+      }
       button.classList.add('pressed');
     }
 
-    function handleButtonRelease() {
+    function handleButtonRelease(event) {
+      // Prevent default touch behavior (e.g., zooming, scrolling)
+      if (event.type === 'touchend') {
+        event.preventDefault();
+      }
       button.classList.remove('pressed');
       playAudio();
     }
