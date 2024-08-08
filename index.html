@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instant Success</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .button {
+      width: 33.33vw;
+      height: 15.12vw;
+      background-image: url('unpressed.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      cursor: pointer;
+      transition: background-image 0.2s ease-in-out;
+    }
+
+    .button.pressed {
+      background-image: url('pressed.png');
+    }
+  </style>
+</head>
+<body>
+  <div class="button" id="myButton"></div>
+
+  <script>
+    const button = document.getElementById('myButton');
+    const audio = new Audio('success.mp3');
+
+    button.addEventListener('mousedown', () => {
+      button.classList.add('pressed');
+    });
+
+    button.addEventListener('mouseup', () => {
+      button.classList.remove('pressed');
+    });
+
+    button.addEventListener('click', () => {
+      audio.currentTime = 0;
+      audio.play();
+    });
+  </script>
+</body>
+</html>
