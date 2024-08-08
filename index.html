@@ -38,7 +38,7 @@
 
     // Add event listeners for both mouse and touch events
     button.addEventListener('mousedown', handleButtonPress);
-    button.addEventListener('touchstart', handleButtonPress, { passive: true });
+    button.addEventListener('touchstart', handleButtonPress, { passive: false });
     button.addEventListener('mouseup', handleButtonRelease);
     button.addEventListener('touchend', handleButtonRelease);
 
@@ -48,6 +48,7 @@
         event.preventDefault();
       }
       button.classList.add('pressed');
+      playAudio();
     }
 
     function handleButtonRelease(event) {
@@ -56,18 +57,17 @@
         event.preventDefault();
       }
       button.classList.remove('pressed');
-      playAudio();
     }
 
     function playAudio() {
-      // Check if the audio is already playing
-      if (audio.paused) {
-        // iOS requires user interaction to play audio
-        audio.currentTime = 0;
-        audio.play().catch(error => {
-          console.error('Error playing audio:', error);
-        });
-      }
+      // Stop the audio if it's already playing
+      audio.pause();
+      audio.currentTime = 0;
+
+      // iOS requires user interaction to play audio
+      audio.play().catch(error => {
+        console.error('Error playing audio:', error);
+      });
     }
   </script>
 </body>
