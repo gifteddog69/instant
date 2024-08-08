@@ -13,10 +13,9 @@
       margin: 0;
       background-color: #ffd381;
     }
-
     .button {
-      width: 33.33vw;
-      height: 15.12vw;
+      width: 70vw;
+      height: 33.12vw; /* Adjust the height to maintain the aspect ratio */
       background-image: url('unpressed.png');
       background-size: contain;
       background-repeat: no-repeat;
@@ -24,7 +23,6 @@
       cursor: pointer;
       transition: background-image 0.2s ease-in-out;
     }
-
     .button.pressed {
       background-image: url('pressed.png');
     }
@@ -32,23 +30,25 @@
 </head>
 <body>
   <div class="button" id="myButton"></div>
-
   <script>
     const button = document.getElementById('myButton');
     const audio = new Audio('success.mp3');
 
-    button.addEventListener('mousedown', () => {
+    // Add event listeners for both mouse and touch events
+    button.addEventListener('mousedown', handleButtonPress);
+    button.addEventListener('touchstart', handleButtonPress);
+    button.addEventListener('mouseup', handleButtonRelease);
+    button.addEventListener('touchend', handleButtonRelease);
+
+    function handleButtonPress() {
       button.classList.add('pressed');
-    });
+    }
 
-    button.addEventListener('mouseup', () => {
+    function handleButtonRelease() {
       button.classList.remove('pressed');
-    });
-
-    button.addEventListener('click', () => {
       audio.currentTime = 0;
       audio.play();
-    });
+    }
   </script>
 </body>
 </html>
