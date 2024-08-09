@@ -28,7 +28,6 @@
       background-position: center;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
-      transition: transform .1s linear;
       -webkit-mask-image: url('mask.png');
       mask-image: url('mask.png');
       -webkit-mask-size: 100% 100%;
@@ -37,6 +36,11 @@
       mask-repeat: no-repeat;
       -webkit-mask-position: center;
       mask-position: center;
+      opacity: 0;
+      transition: opacity 0.3s, transform .1s linear;
+    }
+    .button.loaded {
+      opacity: 1;
     }
     .button:active {
       transform: translate(-5.46%, 19.51%);
@@ -50,29 +54,52 @@
   <script>
     const button = document.getElementById('myButton');
     const audio = new Audio('success.mp3');
-    // Add event listeners for both mouse and touch events
+
+    function checkImagesLoaded() {
+      const bgImage = new Image();
+      const maskImage = new Image();
+      let loadedCount = 0;
+
+      function imageLoaded() {
+        loadedCount++;
+        if (loadedCount === 2) {
+          button.classList.add('loaded');
+          console.log('Both images loaded successfully');
+        }
+      }
+
+      bgImage.onload = imageLoaded;
+      maskImage.onload = imageLoaded;
+      bgImage.onerror = () => console.error('Error loading background image');
+      maskImage.onerror = () => console.error('Error loading mask image');
+
+      bgImage.src = 'unpressed.png';
+      maskImage.src = 'mask.png';
+    }
+
+    checkImagesLoaded();
+
     button.addEventListener('mousedown', handleButtonPress);
     button.addEventListener('touchstart', handleButtonPress, { passive: false });
     button.addEventListener('mouseup', handleButtonRelease);
     button.addEventListener('touchend', handleButtonRelease);
+
     function handleButtonPress(event) {
-      // Prevent default touch behavior (e.g., zooming, scrolling)
       if (event.type === 'touchstart') {
         event.preventDefault();
       }
       playAudio();
     }
+
     function handleButtonRelease(event) {
-      // Prevent default touch behavior (e.g., zooming, scrolling)
       if (event.type === 'touchend') {
         event.preventDefault();
       }
     }
+
     function playAudio() {
-      // Stop the audio if it's already playing
       audio.pause();
       audio.currentTime = 0;
-      // iOS requires user interaction to play audio
       audio.play().catch(error => {
         console.error('Error playing audio:', error);
       });
