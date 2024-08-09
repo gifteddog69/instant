@@ -14,56 +14,69 @@
       background-color: #ffd381;
       touch-action: manipulation;
     }
-    .button {
+    .button-container {
+      position: relative;
       width: 70vw;
       height: 33.12vw;
+    }
+    .button {
+      width: 100%;
+      height: 100%;
       background-image: url('unpressed.png');
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
       cursor: pointer;
-      transition: background-image 0.2s ease-in-out;
       -webkit-tap-highlight-color: transparent;
+      transition: transform 1s linear;
     }
-    .button.pressed {
-      background-image: url('pressed.png');
+    .button:active {
+      transform: translate(-5.46%, 19.51%);
+    }
+    .mask {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('mask.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
-  <div class="button" id="myButton"></div>
+  <div class="button-container">
+    <div class="button" id="myButton"></div>
+    <div class="mask"></div>
+  </div>
   <script>
     const button = document.getElementById('myButton');
     const audio = new Audio('success.mp3');
-
     // Add event listeners for both mouse and touch events
     button.addEventListener('mousedown', handleButtonPress);
     button.addEventListener('touchstart', handleButtonPress, { passive: false });
     button.addEventListener('mouseup', handleButtonRelease);
     button.addEventListener('touchend', handleButtonRelease);
-
     function handleButtonPress(event) {
       // Prevent default touch behavior (e.g., zooming, scrolling)
       if (event.type === 'touchstart') {
         event.preventDefault();
       }
-      button.classList.add('pressed');
       playAudio();
     }
-
     function handleButtonRelease(event) {
       // Prevent default touch behavior (e.g., zooming, scrolling)
       if (event.type === 'touchend') {
         event.preventDefault();
       }
-      button.classList.remove('pressed');
     }
-
     function playAudio() {
       // Stop the audio if it's already playing
       audio.pause();
       audio.currentTime = 0;
-
       // iOS requires user interaction to play audio
       audio.play().catch(error => {
         console.error('Error playing audio:', error);
