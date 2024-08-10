@@ -48,7 +48,7 @@
       background-image: url('FrontColorMask.png');
     }
     .button.pressed {
-      transform: translate(-5.46%, 19.51%);
+      transform: translate(-3.16%, 11.32%);
     }
   </style>
 </head>
@@ -77,35 +77,37 @@
     button.addEventListener('touchstart', handleButtonPress, { passive: false });
     button.addEventListener('mouseup', handleButtonRelease);
     button.addEventListener('touchend', handleButtonRelease);
+    button.addEventListener('touchcancel', handleButtonRelease);
 
-    let isPressed = false;
     let pressTimeout;
 
     function handleButtonPress(event) {
       if (event.type === 'touchstart') {
         event.preventDefault();
       }
-      isPressed = true;
       button.classList.add('pressed');
       playAudio();
 
-      if (event.type === 'touchstart') {
-        pressTimeout = setTimeout(() => {
-          if (!isPressed) {
-            button.classList.remove('pressed');
-          }
-        }, 100); // Adjust this value to change how long the button appears pressed on mobile
+      // Clear any existing timeout
+      if (pressTimeout) {
+        clearTimeout(pressTimeout);
       }
+
+      // Set a new timeout
+      pressTimeout = setTimeout(() => {
+        button.classList.remove('pressed');
+      }, 100); // Adjust this value to change how long the button appears pressed
     }
 
     function handleButtonRelease(event) {
-      if (event.type === 'touchend') {
+      if (event.type === 'touchend' || event.type === 'touchcancel') {
         event.preventDefault();
       }
-      isPressed = false;
-      if (event.type === 'mouseup') {
-        button.classList.remove('pressed');
+      // Clear the timeout if it exists
+      if (pressTimeout) {
+        clearTimeout(pressTimeout);
       }
+      button.classList.remove('pressed');
     }
 
     function playAudio() {
@@ -117,6 +119,13 @@
       source.connect(audioContext.destination);
       source.start(0);
     }
+
+    // Ensure audio context is resumed on user interaction
+    document.body.addEventListener('click', function() {
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+    });
   </script>
 </body>
 </html>
