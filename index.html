@@ -59,27 +59,10 @@
     <div class="layer front-button-mask"></div>
     <div class="layer front-color-mask"></div>
   </div>
-  <script>
+   <script>
     const button = document.getElementById('myButton');
-    let audioContext;
-    let buffer;
-    let currentSource;
-
-    // Initialize audio context on user interaction
-    function initAudio() {
-      if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        // Load audio file
-        fetch('success.mp3')
-          .then(response => response.arrayBuffer())
-          .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
-          .then(decodedBuffer => {
-            buffer = decodedBuffer;
-          })
-          .catch(error => console.error('Error loading audio:', error));
-      }
-    }
-
+    const audio = new Audio('success.mp3');
+    
     button.addEventListener('mousedown', handleButtonPress);
     button.addEventListener('touchstart', handleButtonPress, { passive: false });
     button.addEventListener('mouseup', handleButtonRelease);
@@ -93,8 +76,6 @@
       if (event.type === 'touchstart') {
         event.preventDefault();
       }
-      
-      initAudio(); // Initialize audio on first interaction
       
       clearTimeout(pressTimer);
       clearTimeout(animationTimer);
@@ -120,25 +101,16 @@
     }
 
     function playAudio() {
-      if (!audioContext || !buffer) return;
-
-      if (audioContext.state === 'suspended') {
-        audioContext.resume();
-      }
-
-      if (currentSource) {
-        currentSource.stop();
-      }
-
-      currentSource = audioContext.createBufferSource();
-      currentSource.buffer = buffer;
-      currentSource.connect(audioContext.destination);
-      currentSource.start(0);
+      audio.pause();
+      audio.currentTime = 0;
+      audio.play().catch(error => {
+        console.error('Error playing audio:', error);
+      });
     }
 
-    // Initialize audio on any user interaction with the page
-    document.body.addEventListener('click', initAudio);
-    document.body.addEventListener('touchstart', initAudio, { passive: true });
+    // Preload audio to reduce delay
+    audio.preload = 'auto';
+    audio.load();
   </script>
 </body>
 </html>
