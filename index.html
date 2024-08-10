@@ -11,92 +11,72 @@
       align-items: center;
       height: 100vh;
       margin: 0;
-      background-color: #ffd381;
+      background-color: #ffd391;
       touch-action: manipulation;
     }
     .button-container {
       position: relative;
       width: 70vw;
       height: 33.12vw;
+      overflow: hidden;
     }
-    .button {
+    .layer {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-      background-image: url('unpressed.png');
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
+      pointer-events: none;
+    }
+    .button-bg {
+      background-image: url('ButtonBG.png');
+    }
+    .button {
+      background-image: url('Button.png');
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
-      -webkit-mask-image: url('mask.png');
-      mask-image: url('mask.png');
-      -webkit-mask-size: 100% 100%;
-      mask-size: 100% 100%;
-      -webkit-mask-repeat: no-repeat;
-      mask-repeat: no-repeat;
-      -webkit-mask-position: center;
-      mask-position: center;
-      opacity: 0;
-      transition: opacity 0.3s, transform .1s linear;
+      transition: transform 0.1s linear;
+      pointer-events: auto;
     }
-    .button.loaded {
-      opacity: 1;
+    .front-button-mask {
+      background-image: url('FrontButtonMask.png');
+    }
+    .front-color-mask {
+      background-image: url('FrontColorMask.png');
     }
     .button:active {
-      transform: translate(-5.46%, 19.51%);
+      transform: translate(-3.16%, 11.32%);
     }
   </style>
 </head>
 <body>
   <div class="button-container">
-    <div class="button" id="myButton"></div>
+    <div class="layer button-bg"></div>
+    <div class="layer button" id="myButton"></div>
+    <div class="layer front-button-mask"></div>
+    <div class="layer front-color-mask"></div>
   </div>
   <script>
     const button = document.getElementById('myButton');
     const audio = new Audio('success.mp3');
-
-    function checkImagesLoaded() {
-      const bgImage = new Image();
-      const maskImage = new Image();
-      let loadedCount = 0;
-
-      function imageLoaded() {
-        loadedCount++;
-        if (loadedCount === 2) {
-          button.classList.add('loaded');
-          console.log('Both images loaded successfully');
-        }
-      }
-
-      bgImage.onload = imageLoaded;
-      maskImage.onload = imageLoaded;
-      bgImage.onerror = () => console.error('Error loading background image');
-      maskImage.onerror = () => console.error('Error loading mask image');
-
-      bgImage.src = 'unpressed.png';
-      maskImage.src = 'mask.png';
-    }
-
-    checkImagesLoaded();
-
     button.addEventListener('mousedown', handleButtonPress);
     button.addEventListener('touchstart', handleButtonPress, { passive: false });
     button.addEventListener('mouseup', handleButtonRelease);
     button.addEventListener('touchend', handleButtonRelease);
-
     function handleButtonPress(event) {
       if (event.type === 'touchstart') {
         event.preventDefault();
       }
       playAudio();
     }
-
     function handleButtonRelease(event) {
       if (event.type === 'touchend') {
         event.preventDefault();
       }
     }
-
     function playAudio() {
       audio.pause();
       audio.currentTime = 0;
@@ -105,5 +85,6 @@
       });
     }
   </script>
+  
 </body>
 </html>
