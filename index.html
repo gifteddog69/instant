@@ -16,8 +16,8 @@
     }
     .button-container {
       position: relative;
-      width: 83vw;
-      height: 39.27vw;
+      width: 70vw;
+      height: 33.12vw;
       overflow: hidden;
     }
     .layer {
@@ -38,7 +38,7 @@
       background-image: url('Button.png');
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
-      transition: transform 0.1s linear;
+      transition: transform 0.05s linear;
       pointer-events: auto;
     }
     .front-button-mask {
@@ -47,8 +47,8 @@
     .front-color-mask {
       background-image: url('FrontColorMask.png');
     }
-    .button:active {
-      transform: translate(-3.16%, 11.32%);
+    .button.pressed {
+      transform: translate(-5.46%, 19.51%);
     }
   </style>
 </head>
@@ -61,30 +61,62 @@
   </div>
   <script>
     const button = document.getElementById('myButton');
-    const audio = new Audio('success.mp3');
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    let buffer;
+
+    // Load audio file
+    fetch('success.mp3')
+      .then(response => response.arrayBuffer())
+      .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+      .then(decodedBuffer => {
+        buffer = decodedBuffer;
+      })
+      .catch(error => console.error('Error loading audio:', error));
+
     button.addEventListener('mousedown', handleButtonPress);
     button.addEventListener('touchstart', handleButtonPress, { passive: false });
     button.addEventListener('mouseup', handleButtonRelease);
     button.addEventListener('touchend', handleButtonRelease);
+
+    let isPressed = false;
+    let pressTimeout;
+
     function handleButtonPress(event) {
       if (event.type === 'touchstart') {
         event.preventDefault();
       }
+      isPressed = true;
+      button.classList.add('pressed');
       playAudio();
+
+      if (event.type === 'touchstart') {
+        pressTimeout = setTimeout(() => {
+          if (!isPressed) {
+            button.classList.remove('pressed');
+          }
+        }, 100); // Adjust this value to change how long the button appears pressed on mobile
+      }
     }
+
     function handleButtonRelease(event) {
       if (event.type === 'touchend') {
         event.preventDefault();
       }
+      isPressed = false;
+      if (event.type === 'mouseup') {
+        button.classList.remove('pressed');
+      }
     }
+
     function playAudio() {
-      audio.pause();
-      audio.currentTime = 0;
-      audio.play().catch(error => {
-        console.error('Error playing audio:', error);
-      });
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+      const source = audioContext.createBufferSource();
+      source.buffer = buffer;
+      source.connect(audioContext.destination);
+      source.start(0);
     }
   </script>
-  
 </body>
 </html>
