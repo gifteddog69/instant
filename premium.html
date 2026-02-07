@@ -146,128 +146,157 @@
         </div>
     </div>
 
+
     <script>
-        // REPLACE THESE WITH YOUR ACTUAL SUPABASE CREDENTIALS
-        const SUPABASE_URL = 'https://oyaumovuijcflmtakyea.supabase.co'
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95YXVtb3Z1aWpjZmxtdGFreWVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0NDU0ODcsImV4cCI6MjA4NjAyMTQ4N30.U0jydo3wasXUbohcQy6yyrskxLSm2sIEtzcJq382fUE'
+    // REPLACE THESE WITH YOUR ACTUAL SUPABASE CREDENTIALS
+    const SUPABASE_URL = 'https://oyaumovuijcflmtakyea.supabase.co'
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95YXVtb3Z1aWpjZmxtdGFreWVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0NDU0ODcsImV4cCI6MjA4NjAyMTQ4N30.U0jydo3wasXUbohcQy6yyrskxLSm2sIEtzcJq382fUE'
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-        // Check if this is a first-time login (we'll use a flag in user metadata)
-        let isFirstLogin = false
+    // Check if this is a first-time login (we'll use a flag in user metadata)
+    let isFirstLogin = false
 
-        // Initialize - check if user is already logged in
-        async function init() {
-            const { data: { session } } = await supabase.auth.getSession()
+    // Initialize - check if user is already logged in
+    async function init() {
+        console.log('Init function called')
+        
+        try {
+            const { data: { session } } = await supabaseClient.auth.getSession()
+            console.log('Session:', session)
             
             if (session) {
                 // User is logged in
-                const { data: { user } } = await supabase.auth.getUser()
+                const { data: { user } } = await supabaseClient.auth.getUser()
+                console.log('User:', user)
                 
                 // Check if this is their first login
                 if (user.user_metadata && user.user_metadata.first_login === true) {
+                    console.log('First login - showing password change')
                     showPasswordChange()
                 } else {
+                    console.log('Returning user - showing content')
                     showContent()
                 }
             } else {
                 // Not logged in - show login form
+                console.log('No session - showing login')
                 showLogin()
             }
+        } catch (error) {
+            console.error('Error in init:', error)
+            showLogin() // Fallback to login on error
         }
+    }
 
-        function showLogin() {
-            document.getElementById('loginContainer').style.display = 'block'
-            document.getElementById('passwordChangeContainer').style.display = 'none'
-            document.getElementById('contentContainer').style.display = 'none'
-        }
+    function showLogin() {
+        console.log('Showing login')
+        document.getElementById('loginContainer').style.display = 'block'
+        document.getElementById('passwordChangeContainer').style.display = 'none'
+        document.getElementById('contentContainer').style.display = 'none'
+    }
 
-        function showPasswordChange() {
-            document.getElementById('loginContainer').style.display = 'none'
-            document.getElementById('passwordChangeContainer').style.display = 'block'
-            document.getElementById('contentContainer').style.display = 'none'
-        }
+    function showPasswordChange() {
+        console.log('Showing password change')
+        document.getElementById('loginContainer').style.display = 'none'
+        document.getElementById('passwordChangeContainer').style.display = 'block'
+        document.getElementById('contentContainer').style.display = 'none'
+    }
 
-        function showContent() {
-            document.getElementById('loginContainer').style.display = 'none'
-            document.getElementById('passwordChangeContainer').style.display = 'none'
-            document.getElementById('contentContainer').style.display = 'block'
-        }
+    function showContent() {
+        console.log('Showing content')
+        document.getElementById('loginContainer').style.display = 'none'
+        document.getElementById('passwordChangeContainer').style.display = 'none'
+        document.getElementById('contentContainer').style.display = 'block'
+    }
 
-        // Login form handler
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault()
-            
-            const email = document.getElementById('loginEmail').value
-            const password = document.getElementById('loginPassword').value
-            const messageEl = document.getElementById('loginMessage')
-            
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: email,
-                password: password
-            })
-            
-            if (error) {
-                messageEl.className = 'message error'
-                messageEl.textContent = 'Login failed: ' + error.message
+    // Login form handler
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault()
+        
+        const email = document.getElementById('loginEmail').value
+        const password = document.getElementById('loginPassword').value
+        const messageEl = document.getElementById('loginMessage')
+        
+        console.log('Attempting login for:', email)
+        
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        })
+        
+        if (error) {
+            console.error('Login error:', error)
+            messageEl.className = 'message error'
+            messageEl.textContent = 'Login failed: ' + error.message
+        } else {
+            console.log('Login successful:', data)
+            // Check if first login
+            if (data.user.user_metadata && data.user.user_metadata.first_login === true) {
+                showPasswordChange()
             } else {
-                // Check if first login
-                if (data.user.user_metadata && data.user.user_metadata.first_login === true) {
-                    showPasswordChange()
-                } else {
-                    showContent()
-                }
+                showContent()
             }
-        })
+        }
+    })
 
-        // Password change form handler
-        document.getElementById('passwordChangeForm').addEventListener('submit', async (e) => {
-            e.preventDefault()
-            
-            const newPassword = document.getElementById('newPassword').value
-            const confirmPassword = document.getElementById('confirmPassword').value
-            const messageEl = document.getElementById('passwordChangeMessage')
-            
-            if (newPassword !== confirmPassword) {
-                messageEl.className = 'message error'
-                messageEl.textContent = 'Passwords do not match'
-                return
-            }
-            
-            if (newPassword.length < 6) {
-                messageEl.className = 'message error'
-                messageEl.textContent = 'Password must be at least 6 characters'
-                return
-            }
-            
-            // Update password
-            const { error: updateError } = await supabase.auth.updateUser({
-                password: newPassword,
-                data: { first_login: false }  // Mark that first login is complete
-            })
-            
-            if (updateError) {
-                messageEl.className = 'message error'
-                messageEl.textContent = 'Error updating password: ' + updateError.message
-            } else {
-                messageEl.className = 'message success'
-                messageEl.textContent = 'Password updated successfully!'
-                
-                // Wait a moment then show content
-                setTimeout(() => {
-                    showContent()
-                }, 1500)
-            }
+    // Password change form handler
+    document.getElementById('passwordChangeForm').addEventListener('submit', async (e) => {
+        e.preventDefault()
+        
+        const newPassword = document.getElementById('newPassword').value
+        const confirmPassword = document.getElementById('confirmPassword').value
+        const messageEl = document.getElementById('passwordChangeMessage')
+        
+        if (newPassword !== confirmPassword) {
+            messageEl.className = 'message error'
+            messageEl.textContent = 'Passwords do not match'
+            return
+        }
+        
+        if (newPassword.length < 6) {
+            messageEl.className = 'message error'
+            messageEl.textContent = 'Password must be at least 6 characters'
+            return
+        }
+        
+        console.log('Updating password...')
+        
+        // Update password
+        const { error: updateError } = await supabaseClient.auth.updateUser({
+            password: newPassword,
+            data: { first_login: false }  // Mark that first login is complete
         })
+        
+        if (updateError) {
+            console.error('Password update error:', updateError)
+            messageEl.className = 'message error'
+            messageEl.textContent = 'Error updating password: ' + updateError.message
+        } else {
+            console.log('Password updated successfully')
+            messageEl.className = 'message success'
+            messageEl.textContent = 'Password updated successfully!'
+            
+            // Wait a moment then show content
+            setTimeout(() => {
+                showContent()
+            }, 1500)
+        }
+    })
 
-        // Logout button
-        document.getElementById('logoutBtn').addEventListener('click', async () => {
-            await supabase.auth.signOut()
-            showLogin()
-        })
+    // Logout button
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+        console.log('Logging out...')
+        await supabaseClient.auth.signOut()
+        showLogin()
+    })
 
-        // Run initialization
+    // Run initialization when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init)
+    } else {
         init()
-    </script>
+    }
+</script>
 </body>
 </html>
