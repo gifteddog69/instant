@@ -1,0 +1,309 @@
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    
+    // Handle the /secret route
+    if (url.pathname === '/secret') {
+      return handleSecretPage(request, env);
+    }
+    
+    // Handle logout
+    if (url.pathname === '/logout') {
+      return handleLogout();
+    }
+    
+    // Handle password change
+    if (url.pathname === '/change-password' && request.method === 'POST') {
+      return handlePasswordChange(request, env);
+    }
+    
+    return new Response('Not found', { status: 404 });
+  }
+}
+
+async function handleSecretPage(request, env) {
+  // Get session cookie
+  const cookie = request.headers.get('Cookie') || '';
+  const sessionMatch = cookie.match(/session=([^;]+)/);
+  
+  if (!sessionMatch) {
+    // No session - redirect to login
+    return Response.redirect('https://yoursite.pages.dev/login.html', 302);
+  }
+  
+  const sessionToken = sessionMatch[1];
+  
+  // Verify session with Supabase
+  const supabaseUrl = env.SUPABASE_URL;
+  const supabaseKey = env.SUPABASE_ANON_KEY;
+  
+  const userResponse = await fetch(`${supabaseUrl}/auth/v1/user`, {
+    headers: {
+      'Authorization': `Bearer ${sessionToken}`,
+      'apikey': supabaseKey
+    }
+  });
+  
+  if (!userResponse.ok) {
+    // Invalid session - redirect to login
+    return Response.redirect('https://yoursite.pages.dev/login.html', 302);
+  }
+  
+  const user = await userResponse.json();
+  
+  // Check if first login
+  const isFirstLogin = user.user_metadata?.first_login === true;
+  
+  if (isFirstLogin) {
+    // Show password change page
+    return new Response(getPasswordChangePage(), {
+      headers: {
+        'Content-Type': 'text/html',
+        'Set-Cookie': `session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax`
+      }
+    });
+  }
+  
+  // Show secret content
+  return new Response(getSecretContentPage(), {
+    headers: {
+      'Content-Type': 'text/html',
+      'Set-Cookie': `session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax`
+    }
+  });
+}
+
+async function handleLogout() {
+  return Response.redirect('https://yoursite.pages.dev/login.html', 302, {
+    headers: {
+      'Set-Cookie': 'session=; Path=/; Max-Age=0'
+    }
+  });
+}
+
+async function handlePasswordChange(request, env) {
+  // Get session from cookie
+  const cookie = request.headers.get('Cookie') || '';
+  const sessionMatch = cookie.match(/session=([^;]+)/);
+  
+  if (!sessionMatch) {
+    return new Response(JSON.stringify({ error: 'Not authenticated' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+  
+  const sessionToken = sessionMatch[1];
+  const body = await request.json();
+  
+  // Update password via Supabase
+  const supabaseUrl = env.SUPABASE_URL;
+  const supabaseKey = env.SUPABASE_ANON_KEY;
+  
+  const updateResponse = await fetch(`${supabaseUrl}/auth/v1/user`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${sessionToken}`,
+      'apikey': supabaseKey,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      password: body.password,
+      data: { first_login: false }
+    })
+  });
+  
+  if (!updateResponse.ok) {
+    return new Response(JSON.stringify({ error: 'Password update failed' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+  
+  return new Response(JSON.stringify({ success: true }), {
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+function getPasswordChangePage() {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change Password</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 90%;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Create Your New Password</h2>
+        <p class="message info">Please create a new password for your account</p>
+        <form id="passwordChangeForm">
+            <input type="password" id="newPassword" placeholder="New Password" required minlength="6">
+            <input type="password" id="confirmPassword" placeholder="Confirm Password" required minlength="6">
+            <button type="submit">Set Password</button>
+        </form>
+        <p id="message"></p>
+    </div>
+    
+    <script>
+        document.getElementById('passwordChangeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const messageEl = document.getElementById('message');
+            
+            if (newPassword !== confirmPassword) {
+                messageEl.className = 'message error';
+                messageEl.textContent = 'Passwords do not match';
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                messageEl.className = 'message error';
+                messageEl.textContent = 'Password must be at least 6 characters';
+                return;
+            }
+            
+            const response = await fetch('/change-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: newPassword })
+            });
+            
+            if (response.ok) {
+                messageEl.className = 'message success';
+                messageEl.textContent = 'Password updated successfully!';
+                setTimeout(() => {
+                    window.location.href = '/secret';
+                }, 1500);
+            } else {
+                messageEl.className = 'message error';
+                messageEl.textContent = 'Error updating password';
+            }
+        });
+    </script>
+</body>
+</html>`;
+}
+
+function getSecretContentPage() {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secret Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 90%;
+        }
+        button {
+            padding: 12px 24px;
+            margin-top: 20px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #c82333;
+        }
+        h1 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 Secret Page 🎉</h1>
+        <p>Welcome! This is your truly protected content.</p>
+        
+        <!-- PUT YOUR ACTUAL SECRET CONTENT HERE -->
+        <div style="margin: 30px 0;">
+            <p>This content is only visible to authenticated users.</p>
+            <p>The HTML for this page never reaches the browser unless you're logged in!</p>
+        </div>
+        
+        <button onclick="window.location.href='/logout'">Logout</button>
+    </div>
+</body>
+</html>`;
+}
