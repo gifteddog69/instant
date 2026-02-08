@@ -7,16 +7,16 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
+            background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
         }
         .login-container {
-            background: white;
+            
             padding: 2rem;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -37,17 +37,21 @@
         }
         button {
             width: 100%;
+            font-weight:600;
             padding: 0.75rem;
-            background-color: #007bff;
-            color: white;
-            border: none;
+            background: linear-gradient(180deg,rgba(230, 211, 117, 1) 1%, rgba(255, 163, 15, 1) 64%, rgba(252, 176, 69, 1) 100%);
+            color: rgb(0, 0, 0);
             border-radius: 4px;
             cursor: pointer;
             font-size: 1rem;
-        }
+            transition: border-radius 5s ease, padding 5s ease,  color 0.5s ease;
+}
         button:hover {
-            background-color: #0056b3;
-        }
+            border-radius: 100%;
+            padding:180px 200px;
+            color: #00000000;
+            transition: border-radius 5s ease, padding 5s ease,  color 0.5s ease;
+}
         .error {
             color: red;
             margin-top: 1rem;
@@ -78,7 +82,7 @@
         const { data: { session } } = await supabaseClient.auth.getSession();
         if (session) {
             // Already logged in, redirect to secret page
-            window.location.href = 'secret.html';
+            window.location.href = 'premium_portal.html';
         }
     }
 
@@ -105,7 +109,7 @@
         } else {
             console.log('Login successful!', data);
             // Redirect to secret page
-            window.location.href = 'secret.html';
+            window.location.href = 'premium_portal.html';
         }
     });
 
