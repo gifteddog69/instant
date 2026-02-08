@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instant Success – Premium Portal</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+            overflow: hidden;
+        }
+
+        /* Hide content until auth is verified */
+        body.loading .button-container {
+            display: none;
+        }
+
+        body.loading .button-hitbox {
+            display: none;
+        }
+
+        /* Analog counter styles */
+
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 698px;
+    height: 166px;
+    z-index: 1000;
+}
+
+.bottom-bar-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: url('leatherbg.png');
+    background-size:contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.bottom-bar-content {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    pointer-events: none;
+}
+
+.bottom-bar-left {
+    width: 50%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-left: 170px;
+    pointer-events: auto;
+    margin-bottom: 20px;
+}
+
+.bottom-bar-right {
+    width: 50%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 35px;
+    margin-bottom: -80px;
+    pointer-events: auto;
+}
+
+/* Counter styles - no scaling */
+#counter-container {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.counter-group {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+}
+
+.digit-container {
+    background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);
+    border: 2px solid #333;
+    border-radius: 8px;
+    padding: 10px 8px;
+    box-shadow: 
+        inset 0 2px 4px rgba(0,0,0,0.5),
+        0 4px 8px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    gap: 2px;
+}
+
+.digit {
+    font-family: 'Courier New', monospace;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #dfdfdf;
+    text-shadow: 0 0 10px rgba(255,255,255,0.3);
+    display: block;
+    min-width: 40px;
+    text-align: center;
+    line-height: 1;
+    padding: 0 4px;
+    border-right: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.digit:last-child {
+    border-right: none;
+}
+
+.digit-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 25%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+
+/* Logout button */
+#logout-btn {
+    padding: 24px 24px;
+    border-radius: 60px;
+    cursor: pointer;
+    transition: all 0.2s;
+    opacity:0;
+}
+
+
+
+body.loading .bottom-bar {
+    display: none;
+}
+
+        .button-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            cursor: default;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .button-hitbox {
+            /* border: 2px white solid; */
+            border-radius: 80%;
+            position: absolute;
+            width: 600px;
+            height: 255px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            cursor: pointer;
+        }
+
+        #carpetmask_back {
+            background-image: url('carpetmask_back.png');
+            z-index: 1;
+        }
+
+        #buttonhole {
+            background-image: url('buttonhole.png');
+            z-index: 2;
+        }
+
+        #button {
+            background-image: url('button.png');
+            z-index: 3;
+            transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .button-container.active #button {
+            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translate(-21px, 52px);
+        }
+
+        #carpetmask_front {
+            background-image: url('carpetmask_front.png');
+            z-index: 4;
+            pointer-events: none;
+        }
+
+        #buttonmask_clear {
+            background-image: url('buttonmask_clear.png');
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        #buttonmask_shadow {
+            background-image: url('buttonmask_shadow.png');
+            z-index: 6;
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.1s ease;
+        }
+
+        .button-container.active #buttonmask_shadow {
+            opacity: 0;
+        }
+
+        /* Password change form styles */
+#password-change-container {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgb(34, 35, 64);
+    padding: 3rem;
+    border-radius: 40px;
+    box-shadow: 
+        0 0 0 100vmax rgba(0, 0, 0, 0.85),
+        0 20px 60px rgba(0, 0, 0, 0.9),
+        0 40px 100px rgba(0, 0, 0, 0.7);
+    z-index: 10000;
+    color: rgb(255, 255, 255);
+}
+
+#password-change-container.show {
+    display: block;
+}
+
+#password-change-container h2 {
+    color: #ffffff;
+    text-align: center;
+    font-family: 'Orbitron', 'Audiowide', 'Electrolize', sans-serif;
+    margin-bottom: 4rem;
+}
+
+#password-change-container input {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#password-change-container button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #000000;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+    </style>
+</head>
+<body class="loading">
+    <!-- Password change form (only shown on first login) -->
+    <div id="password-change-container">
+        <h2>Welcome to Instant Success Premium Portal! Please set your new password.</h2>
+        <form id="password-change-form">
+            <input type="password" id="new-password" placeholder="New password" required minlength="6">
+            <button type="submit">Set Password</button>
+        </form>
+    </div>
+
+    <!-- Main button content -->
+    <div class="button-container" id="buttonContainer">
+        <div class="layer" id="carpetmask_back"></div>
+        <div class="layer" id="buttonhole"></div>
+        <div class="layer" id="button"></div>
+        <div class="layer" id="carpetmask_front"></div>
+        <div class="layer" id="buttonmask_clear"></div>
+        <div class="layer" id="buttonmask_shadow"></div>
+    </div>
+    <div class="button-hitbox" id="buttonHitbox"></div>
+<!-- Add this wrapper around your counter -->
+<!-- Fixed bottom bar -->
+<div class="bottom-bar">
+    <div class="bottom-bar-bg"></div>
+    <div class="bottom-bar-content">
+        <div class="bottom-bar-left">
+            <div id="counter-container">
+                <div class="counter-group">
+                    <div class="digit-container" id="minutes-container">
+                        <!-- Digits will be generated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-bar-right">
+            <button id="logout-btn"></button>
+        </div>
+    </div>
+</div>
+
+    <script>
+        // ===== AUTHENTICATION CHECK =====
+        const SUPABASE_URL = 'https://oyaumovuijcflmtakyea.supabase.co'
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95YXVtb3Z1aWpjZmxtdGFreWVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0NDU0ODcsImV4cCI6MjA4NjAyMTQ4N30.U0jydo3wasXUbohcQy6yyrskxLSm2sIEtzcJq382fUE'
+    
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function checkAuth() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            if (!session) {
+                // Not logged in - redirect to login
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Check if first login
+            const user = session.user;
+            if (user.user_metadata?.first_login === true) {
+                // Show password change form
+                document.getElementById('password-change-container').classList.add('show');
+                document.body.classList.remove('loading');
+                return;
+            }
+
+            // All good - show the button
+            document.body.classList.remove('loading');
+        }
+
+        // Handle password change
+        const passwordForm = document.getElementById('password-change-form');
+        if (passwordForm) {
+            passwordForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const newPassword = document.getElementById('new-password').value;
+
+                const { error } = await supabaseClient.auth.updateUser({
+                    password: newPassword,
+                    data: { first_login: false }
+                });
+
+                if (error) {
+                    alert('Error updating password: ' + error.message);
+                } else {
+                    alert('Password updated successfully!');
+                    document.getElementById('password-change-container').classList.remove('show');
+                    document.body.classList.remove('loading');
+                }
+            });
+        }
+
+        // Run auth check on page load
+        checkAuth();
+
+        // ===== BUTTON ANIMATION CODE =====
+        const buttonContainer = document.getElementById('buttonContainer');
+        const buttonHitbox = document.getElementById('buttonHitbox');
+        let isPressed = false;
+
+        const audio = new Audio('success2.mp3');
+
+        buttonHitbox.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            pressButton();
+        });
+
+        document.addEventListener('mouseup', () => {
+            releaseButton();
+        });
+
+        buttonHitbox.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            pressButton();
+        });
+
+        document.addEventListener('touchend', (e) => {
+            releaseButton();
+        });
+
+        buttonHitbox.addEventListener('keydown', (e) => {
+            if ((e.key === ' ' || e.key === 'Enter') && !isPressed) {
+                e.preventDefault();
+                pressButton();
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                releaseButton();
+            }
+        });
+
+        function pressButton() {
+            if (!isPressed) {
+                isPressed = true;
+                buttonContainer.classList.add('active');
+                
+                audio.currentTime = 0;
+                audio.play().catch(e => console.log('Audio play failed:', e));
+            }
+        }
+
+        function releaseButton() {
+            if (isPressed) {
+                isPressed = false;
+                buttonContainer.classList.remove('active');
+            }
+        }
+
+        buttonHitbox.setAttribute('tabindex', '0');
+
+      // ===== COUNTDOWN TIMER =====
+// Target: 10:00 PM on Sunday, February 8, 2027 (NZ timezone)
+const targetDate = new Date('2027-02-08T22:00:00+13:00'); // +13:00 is NZ Daylight Time
+
+function updateCounter() {
+    const now = new Date();
+    const diffMs = targetDate - now;
+    
+    if (diffMs <= 0) {
+        // Countdown finished
+        const minutesContainer = document.getElementById('minutes-container');
+        minutesContainer.innerHTML = '<span class="digit">0</span>';
+        return;
+    }
+    
+    // Calculate total minutes remaining
+    const totalMinutes = Math.floor(diffMs / 1000 / 60);
+    
+    // Convert minutes to string and create individual digit elements
+    const minutesStr = totalMinutes.toString();
+    const minutesContainer = document.getElementById('minutes-container');
+    
+    // Only update if the number of digits changed (to avoid flickering)
+    if (minutesContainer.children.length !== minutesStr.length) {
+        minutesContainer.innerHTML = '';
+        for (let i = 0; i < minutesStr.length; i++) {
+            const digitSpan = document.createElement('span');
+            digitSpan.className = 'digit';
+            digitSpan.id = `minute-digit-${i}`;
+            minutesContainer.appendChild(digitSpan);
+        }
+    }
+    
+    // Update each minute digit
+    for (let i = 0; i < minutesStr.length; i++) {
+        const digitElement = document.getElementById(`minute-digit-${i}`);
+        if (digitElement) {
+            digitElement.textContent = minutesStr[i];
+        }
+    }
+}
+
+// Update immediately and then every second
+updateCounter();
+setInterval(updateCounter, 1000);
+
+// Logout functionality
+document.getElementById('logout-btn').addEventListener('click', async () => {
+    await supabaseClient.auth.signOut();
+    window.location.href = 'login.html';
+});
+    </script>
+</body>
+</html>
