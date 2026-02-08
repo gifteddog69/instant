@@ -67,50 +67,50 @@
     </div>
 
     <script>
-        // Initialize Supabase client
-        const SUPABASE_URL = 'https://oyaumovuijcflmtakyea.supabase.co'
+    // Initialize Supabase client
+     const SUPABASE_URL = 'https://oyaumovuijcflmtakyea.supabase.co'
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95YXVtb3Z1aWpjZmxtdGFreWVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0NDU0ODcsImV4cCI6MjA4NjAyMTQ4N30.U0jydo3wasXUbohcQy6yyrskxLSm2sIEtzcJq382fUE'
-       
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Check if already logged in
-        async function checkIfLoggedIn() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-                // Already logged in, redirect to secret page
-                window.location.href = 'secret.html';
-            }
+    // Check if already logged in
+    async function checkIfLoggedIn() {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session) {
+            // Already logged in, redirect to secret page
+            window.location.href = 'secret.html';
         }
+    }
 
-        // Handle login form submission
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const errorDiv = document.getElementById('error-message');
+    // Handle login form submission
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const errorDiv = document.getElementById('error-message');
 
-            errorDiv.textContent = ''; // Clear previous errors
+        errorDiv.textContent = ''; // Clear previous errors
 
-            console.log('Attempting login for:', email);
+        console.log('Attempting login for:', email);
 
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: email,
-                password: password
-            });
-
-            if (error) {
-                console.error('Login error:', error);
-                errorDiv.textContent = 'Login failed: ' + error.message;
-            } else {
-                console.log('Login successful!', data);
-                // Redirect to secret page
-                window.location.href = 'secret.html';
-            }
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
         });
 
-        // Run on page load
-        checkIfLoggedIn();
-    </script>
+        if (error) {
+            console.error('Login error:', error);
+            errorDiv.textContent = 'Login failed: ' + error.message;
+        } else {
+            console.log('Login successful!', data);
+            // Redirect to secret page
+            window.location.href = 'secret.html';
+        }
+    });
+
+    // Run on page load
+    checkIfLoggedIn();
+</script>
 </body>
 </html>
