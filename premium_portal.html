@@ -235,10 +235,16 @@ body.loading .bottom-bar {
 
 /* Mobile breakpoint */
 @media (max-width: 768px) {
-    /* Scale down main button and carpet layers */
-    .button-container {
-        transform: scale(0.7) translateY(-7%);
-        transform-origin: center center;
+    /* Ensure body fills viewport without black bars */
+    body {
+        width: 100%;
+        height: 100%;
+    }
+    
+    /* Scale down main button and carpet layers - use zoom instead of transform */
+    .layer {
+        background-size: 70% auto;
+        background-position: center calc(50% - 7%);
     }
     
     /* Scale down the button hitbox proportionally and adjust position */
@@ -248,57 +254,62 @@ body.loading .bottom-bar {
         top: calc(50% - 7%);
     }
     
-    /* Adjust bottom bar for mobile */
+    /* Adjust active button transform for scaled size */
+    .button-container.active #button {
+        transform: translate(-14.7px, 36.4px); /* -21px, 52px * 0.7 */
+        background-position: center calc(50% - 7%);
+    }
+    
+    /* Adjust bottom bar for mobile - make counter even smaller */
     .bottom-bar {
         width: 488.6px; /* 698px * 0.7 */
         height: 116.2px; /* 166px * 0.7 */
+        transform: translateX(-50%) scale(0.7);
+        transform-origin: center bottom;
     }
     
-    .bottom-bar-left {
-        margin-left: 119px; /* 170px * 0.7 */
-        margin-bottom: 14px; /* 20px * 0.7 */
-    }
-    
-    .bottom-bar-right {
-        padding-right: 24.5px; /* 35px * 0.7 */
-        margin-bottom: -56px; /* -80px * 0.7 */
-    }
-    
-    /* Scale counter elements */
+    /* Scale counter elements - additional scaling on top of bottom-bar scale */
     #counter-container {
-        gap: 10.5px; /* 15px * 0.7 */
+        gap: 10.5px;
+        transform: scale(0.8);
     }
     
     .counter-group {
-        gap: 2.1px; /* 3px * 0.7 */
+        gap: 2.1px;
     }
     
     .digit-container {
-        padding: 7px 5.6px; /* 10px 8px * 0.7 */
-        border-radius: 5.6px; /* 8px * 0.7 */
+        padding: 5px 4px;
+        border-radius: 5.6px;
     }
     
     .digit {
-        font-size: 1.05rem; /* 1.5rem * 0.7 */
-        min-width: 28px; /* 40px * 0.7 */
-        padding: 0 2.8px; /* 0 4px * 0.7 */
+        font-size: 0.9rem;
+        min-width: 24px;
+        padding: 0 2px;
     }
     
     /* Scale logout button */
     #logout-btn {
-        padding: 16.8px 16.8px; /* 24px * 0.7 */
-        border-radius: 42px; /* 60px * 0.7 */
+        padding: 14px 14px;
+        border-radius: 42px;
     }
     
     /* Scale password change container for mobile */
     #password-change-container {
-        padding: 2.1rem; /* 3rem * 0.7 */
-        border-radius: 28px; /* 40px * 0.7 */
+        padding: 2.1rem;
+        border-radius: 28px;
         max-width: 90%;
+        width: 90%;
     }
     
     #password-change-container h2 {
-        margin-bottom: 2.8rem; /* 4rem * 0.7 */
+        margin-bottom: 2.8rem;
+        font-size: 0.9rem;
+    }
+    
+    #password-change-container input,
+    #password-change-container button {
         font-size: 0.9rem;
     }
 }
