@@ -233,6 +233,76 @@ body.loading .bottom-bar {
             opacity: 0;
         }
 
+/* Mobile breakpoint */
+@media (max-width: 768px) {
+    /* Scale down main button and carpet layers */
+    .button-container {
+        transform: scale(0.7) translateY(-7%);
+        transform-origin: center center;
+    }
+    
+    /* Scale down the button hitbox proportionally and adjust position */
+    .button-hitbox {
+        width: 420px; /* 600px * 0.7 */
+        height: 178.5px; /* 255px * 0.7 */
+        top: calc(50% - 7%);
+    }
+    
+    /* Adjust bottom bar for mobile */
+    .bottom-bar {
+        width: 488.6px; /* 698px * 0.7 */
+        height: 116.2px; /* 166px * 0.7 */
+    }
+    
+    .bottom-bar-left {
+        margin-left: 119px; /* 170px * 0.7 */
+        margin-bottom: 14px; /* 20px * 0.7 */
+    }
+    
+    .bottom-bar-right {
+        padding-right: 24.5px; /* 35px * 0.7 */
+        margin-bottom: -56px; /* -80px * 0.7 */
+    }
+    
+    /* Scale counter elements */
+    #counter-container {
+        gap: 10.5px; /* 15px * 0.7 */
+    }
+    
+    .counter-group {
+        gap: 2.1px; /* 3px * 0.7 */
+    }
+    
+    .digit-container {
+        padding: 7px 5.6px; /* 10px 8px * 0.7 */
+        border-radius: 5.6px; /* 8px * 0.7 */
+    }
+    
+    .digit {
+        font-size: 1.05rem; /* 1.5rem * 0.7 */
+        min-width: 28px; /* 40px * 0.7 */
+        padding: 0 2.8px; /* 0 4px * 0.7 */
+    }
+    
+    /* Scale logout button */
+    #logout-btn {
+        padding: 16.8px 16.8px; /* 24px * 0.7 */
+        border-radius: 42px; /* 60px * 0.7 */
+    }
+    
+    /* Scale password change container for mobile */
+    #password-change-container {
+        padding: 2.1rem; /* 3rem * 0.7 */
+        border-radius: 28px; /* 40px * 0.7 */
+        max-width: 90%;
+    }
+    
+    #password-change-container h2 {
+        margin-bottom: 2.8rem; /* 4rem * 0.7 */
+        font-size: 0.9rem;
+    }
+}
+        
         /* Password change form styles */
 #password-change-container {
     display: none;
