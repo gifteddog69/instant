@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><<link rel="preconnect" href="https://fonts.googleapis.com">
+<head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
@@ -33,128 +34,125 @@
             display: none;
         }
 
-        /* Analog counter styles */
+        /* ===== BOTTOM BAR ===== */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 698px;
+            height: 166px;
+            z-index: 1000;
+        }
 
-.bottom-bar {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 698px;
-    height: 166px;
-    z-index: 1000;
-}
+        .bottom-bar-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: url('leatherbg.png');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
 
-.bottom-bar-bg {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-image: url('leatherbg.png');
-    background-size:contain;
-    background-position: center;
-    background-repeat: no-repeat;
-}
+        .bottom-bar-content {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            pointer-events: none;
+        }
 
-.bottom-bar-content {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    pointer-events: none;
-}
+        .bottom-bar-left {
+            width: 50%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-left: 170px;
+            pointer-events: auto;
+            margin-bottom: 20px;
+        }
 
-.bottom-bar-left {
-    width: 50%;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin-left: 170px;
-    pointer-events: auto;
-    margin-bottom: 20px;
-}
+        .bottom-bar-right {
+            width: 50%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding-right: 35px;
+            margin-bottom: -80px;
+            pointer-events: auto;
+        }
 
-.bottom-bar-right {
-    width: 50%;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding-right: 35px;
-    margin-bottom: -80px;
-    pointer-events: auto;
-}
+        /* Counter styles */
+        #counter-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
 
-/* Counter styles - no scaling */
-#counter-container {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-}
+        .counter-group {
+            display: flex;
+            gap: 3px;
+            align-items: center;
+        }
 
-.counter-group {
-    display: flex;
-    gap: 3px;
-    align-items: center;
-}
+        .digit-container {
+            background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 10px 8px;
+            box-shadow: 
+                inset 0 2px 4px rgba(0,0,0,0.5),
+                0 4px 8px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            gap: 2px;
+        }
 
-.digit-container {
-    background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);
-    border: 2px solid #333;
-    border-radius: 8px;
-    padding: 10px 8px;
-    box-shadow: 
-        inset 0 2px 4px rgba(0,0,0,0.5),
-        0 4px 8px rgba(0,0,0,0.3);
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    gap: 2px;
-}
+        .digit {
+            font-family: 'Courier New', monospace;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #dfdfdf;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+            display: block;
+            min-width: 40px;
+            text-align: center;
+            line-height: 1;
+            padding: 0 4px;
+            border-right: 2px solid rgba(255, 255, 255, 0.1);
+        }
 
-.digit {
-    font-family: 'Courier New', monospace;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #dfdfdf;
-    text-shadow: 0 0 10px rgba(255,255,255,0.3);
-    display: block;
-    min-width: 40px;
-    text-align: center;
-    line-height: 1;
-    padding: 0 4px;
-    border-right: 2px solid rgba(255, 255, 255, 0.1);
-}
+        .digit:last-child {
+            border-right: none;
+        }
 
-.digit:last-child {
-    border-right: none;
-}
+        .digit-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 25%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+            pointer-events: none;
+        }
 
-.digit-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 25%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
-    pointer-events: none;
-}
+        /* Logout button */
+        #logout-btn {
+            padding: 24px 24px;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: all 0.2s;
+            opacity: 0;
+        }
 
+        body.loading .bottom-bar {
+            display: none;
+        }
 
-/* Logout button */
-#logout-btn {
-    padding: 24px 24px;
-    border-radius: 60px;
-    cursor: pointer;
-    transition: all 0.2s;
-    opacity:0;
-}
-
-
-
-body.loading .bottom-bar {
-    display: none;
-}
-
+        /* ===== BUTTON / LAYER SETUP ===== */
         .button-container {
             position: relative;
             width: 100vw;
@@ -233,52 +231,105 @@ body.loading .bottom-bar {
             opacity: 0;
         }
 
+        /* ===== MOBILE STYLES ===== */
+        @media (max-width: 768px) {
+
+            /* Zoom in on all layers and shift centre upward.
+               background-size: ~300% means we see roughly the middle third.
+               background-position: center 38% raises the focal point slightly. */
+            .layer {
+                background-size: 300%;
+                background-position: center 38%;
+            }
+
+            /* The hitbox needs to scale and reposition to match the zoomed image.
+               At 300% zoom the original 600px-wide button spans 3× wider than
+               the viewport, so the visible portion is ~1/3 of that — but because
+               the button is centered we just shrink the hitbox proportionally
+               and nudge it upward to match the raised background-position. */
+            .button-hitbox {
+                width: 90vw;
+                max-width: 360px;
+                height: 38vw;
+                max-height: 155px;
+                /* Raised slightly to match the background shift */
+                top: 44%;
+            }
+
+            /* Bottom bar: fixed phone-friendly width, small side breathing room */
+            .bottom-bar {
+                width: 360px;
+                height: 130px;
+            }
+
+            /* Scale down the counter digits a little so they fit */
+            .digit {
+                font-size: 1.1rem;
+                min-width: 28px;
+            }
+
+            .digit-container {
+                padding: 7px 5px;
+            }
+
+            /* Tighten the left/right positioning inside the bar */
+            .bottom-bar-left {
+                margin-left: 80px;
+                margin-bottom: 14px;
+            }
+
+            .bottom-bar-right {
+                padding-right: 20px;
+                margin-bottom: -55px;
+            }
+        }
+
         /* Password change form styles */
-#password-change-container {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgb(34, 35, 64);
-    padding: 3rem;
-    border-radius: 40px;
-    box-shadow: 
-        0 0 0 100vmax rgba(0, 0, 0, 0.85),
-        0 20px 60px rgba(0, 0, 0, 0.9),
-        0 40px 100px rgba(0, 0, 0, 0.7);
-    z-index: 10000;
-    color: rgb(255, 255, 255);
-}
+        #password-change-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgb(34, 35, 64);
+            padding: 3rem;
+            border-radius: 40px;
+            box-shadow: 
+                0 0 0 100vmax rgba(0, 0, 0, 0.85),
+                0 20px 60px rgba(0, 0, 0, 0.9),
+                0 40px 100px rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            color: rgb(255, 255, 255);
+        }
 
-#password-change-container.show {
-    display: block;
-}
+        #password-change-container.show {
+            display: block;
+        }
 
-#password-change-container h2 {
-    color: #ffffff;
-    text-align: center;
-    font-family: "Playfair Display", serif;
-    margin-bottom: 4rem;
-}
+        #password-change-container h2 {
+            color: #ffffff;
+            text-align: center;
+            font-family: "Playfair Display", serif;
+            margin-bottom: 4rem;
+        }
 
-#password-change-container input {
-    width: 100%;
-    padding: 0.75rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
+        #password-change-container input {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
 
-#password-change-container button {
-    width: 100%;
-    padding: 0.75rem;
-    background-color: #000000;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
+        #password-change-container button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #000000;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body class="loading">
@@ -304,30 +355,30 @@ body.loading .bottom-bar {
         <div class="layer" id="buttonmask_shadow"></div>
     </div>
     <div class="button-hitbox" id="buttonHitbox"></div>
-<!-- Add this wrapper around your counter -->
-<!-- Fixed bottom bar -->
-<div class="bottom-bar">
-    <div class="bottom-bar-bg"></div>
-    <div class="bottom-bar-content">
-        <div class="bottom-bar-left">
-            <div id="counter-container">
-                <div class="counter-group">
-                    <div class="digit-container" id="minutes-container">
-                        <!-- Digits will be generated dynamically -->
+
+    <!-- Fixed bottom bar -->
+    <div class="bottom-bar">
+        <div class="bottom-bar-bg"></div>
+        <div class="bottom-bar-content">
+            <div class="bottom-bar-left">
+                <div id="counter-container">
+                    <div class="counter-group">
+                        <div class="digit-container" id="minutes-container">
+                            <!-- Digits will be generated dynamically -->
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="bottom-bar-right">
-            <button id="logout-btn"></button>
+            <div class="bottom-bar-right">
+                <button id="logout-btn"></button>
+            </div>
         </div>
     </div>
-</div>
 
     <script>
         // ===== AUTHENTICATION CHECK =====
         const SUPABASE_URL = 'https://oyaumovuijcflmtakyea.supabase.co'
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95YXVtb3Z1aWpjZmxtdGFreWVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0NDU0ODcsImV4cCI6MjA4NjAyMTQ4N30.U0jydo3wasXUbohcQy6yyrskxLSm2sIEtzcJq382fUE'
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95YXVtb3Z1aWpjZmxtdGFreWVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0NDU0ODcsImV4cCI6MjA4NjAyMTQ4N30.U0jydo3wasXUbohcQy6yyrskxLSm2sIEtzcJq382fUE'
     
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -335,25 +386,20 @@ body.loading .bottom-bar {
             const { data: { session } } = await supabaseClient.auth.getSession();
 
             if (!session) {
-                // Not logged in - redirect to login
                 window.location.href = 'login.html';
                 return;
             }
 
-            // Check if first login
             const user = session.user;
             if (user.user_metadata?.first_login === true) {
-                // Show password change form
                 document.getElementById('password-change-container').classList.add('show');
                 document.body.classList.remove('loading');
                 return;
             }
 
-            // All good - show the button
             document.body.classList.remove('loading');
         }
 
-        // Handle password change
         const passwordForm = document.getElementById('password-change-form');
         if (passwordForm) {
             passwordForm.addEventListener('submit', async (e) => {
@@ -375,7 +421,6 @@ body.loading .bottom-bar {
             });
         }
 
-        // Run auth check on page load
         checkAuth();
 
         // ===== BUTTON ANIMATION CODE =====
@@ -421,7 +466,6 @@ body.loading .bottom-bar {
             if (!isPressed) {
                 isPressed = true;
                 buttonContainer.classList.add('active');
-                
                 audio.currentTime = 0;
                 audio.play().catch(e => console.log('Audio play failed:', e));
             }
@@ -436,57 +480,49 @@ body.loading .bottom-bar {
 
         buttonHitbox.setAttribute('tabindex', '0');
 
-      // ===== COUNTDOWN TIMER =====
-// Target: 10:00 PM on Sunday, February 8, 2027 (NZ timezone)
-const targetDate = new Date('2027-02-08T22:00:00+13:00'); // +13:00 is NZ Daylight Time
+        // ===== COUNTDOWN TIMER =====
+        const targetDate = new Date('2027-02-08T22:00:00+13:00');
 
-function updateCounter() {
-    const now = new Date();
-    const diffMs = targetDate - now;
-    
-    if (diffMs <= 0) {
-        // Countdown finished
-        const minutesContainer = document.getElementById('minutes-container');
-        minutesContainer.innerHTML = '<span class="digit">0</span>';
-        return;
-    }
-    
-    // Calculate total minutes remaining
-    const totalMinutes = Math.floor(diffMs / 1000 / 60);
-    
-    // Convert minutes to string and create individual digit elements
-    const minutesStr = totalMinutes.toString();
-    const minutesContainer = document.getElementById('minutes-container');
-    
-    // Only update if the number of digits changed (to avoid flickering)
-    if (minutesContainer.children.length !== minutesStr.length) {
-        minutesContainer.innerHTML = '';
-        for (let i = 0; i < minutesStr.length; i++) {
-            const digitSpan = document.createElement('span');
-            digitSpan.className = 'digit';
-            digitSpan.id = `minute-digit-${i}`;
-            minutesContainer.appendChild(digitSpan);
+        function updateCounter() {
+            const now = new Date();
+            const diffMs = targetDate - now;
+            
+            if (diffMs <= 0) {
+                const minutesContainer = document.getElementById('minutes-container');
+                minutesContainer.innerHTML = '<span class="digit">0</span>';
+                return;
+            }
+            
+            const totalMinutes = Math.floor(diffMs / 1000 / 60);
+            const minutesStr = totalMinutes.toString();
+            const minutesContainer = document.getElementById('minutes-container');
+            
+            if (minutesContainer.children.length !== minutesStr.length) {
+                minutesContainer.innerHTML = '';
+                for (let i = 0; i < minutesStr.length; i++) {
+                    const digitSpan = document.createElement('span');
+                    digitSpan.className = 'digit';
+                    digitSpan.id = `minute-digit-${i}`;
+                    minutesContainer.appendChild(digitSpan);
+                }
+            }
+            
+            for (let i = 0; i < minutesStr.length; i++) {
+                const digitElement = document.getElementById(`minute-digit-${i}`);
+                if (digitElement) {
+                    digitElement.textContent = minutesStr[i];
+                }
+            }
         }
-    }
-    
-    // Update each minute digit
-    for (let i = 0; i < minutesStr.length; i++) {
-        const digitElement = document.getElementById(`minute-digit-${i}`);
-        if (digitElement) {
-            digitElement.textContent = minutesStr[i];
-        }
-    }
-}
 
-// Update immediately and then every second
-updateCounter();
-setInterval(updateCounter, 1000);
+        updateCounter();
+        setInterval(updateCounter, 1000);
 
-// Logout functionality
-document.getElementById('logout-btn').addEventListener('click', async () => {
-    await supabaseClient.auth.signOut();
-    window.location.href = 'login.html';
-});
+        // Logout functionality
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            await supabaseClient.auth.signOut();
+            window.location.href = 'login.html';
+        });
     </script>
 </body>
 </html>
