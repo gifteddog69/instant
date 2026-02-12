@@ -234,27 +234,18 @@
         /* ===== MOBILE STYLES ===== */
         @media (max-width: 768px) {
 
-            /* Zoom in on all layers and shift centre upward.
-               background-size: ~300% means we see roughly the middle third.
-               background-position: center 38% raises the focal point slightly. */
-            .layer {
-                background-size: 300%;
-                background-position: center 38%;
-            }
+    .layer {
+        background-size: 400%;
+        background-position: center 38%;
+    }
 
-            /* The hitbox needs to scale and reposition to match the zoomed image.
-               At 300% zoom the original 600px-wide button spans 3× wider than
-               the viewport, so the visible portion is ~1/3 of that — but because
-               the button is centered we just shrink the hitbox proportionally
-               and nudge it upward to match the raised background-position. */
-            .button-hitbox {
-                width: 90vw;
-                max-width: 360px;
-                height: 38vw;
-                max-height: 155px;
-                /* Raised slightly to match the background shift */
-                top: 44%;
-            }
+    .button-hitbox {
+        width: 90vw;
+        max-width: 360px;
+        height: 38vw;
+        max-height: 155px;
+        top: 44%;
+    }
 
             /* Bottom bar: fixed phone-friendly width, small side breathing room */
             .bottom-bar {
