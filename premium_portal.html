@@ -25,7 +25,6 @@
             overflow: hidden;
         }
 
-        /* Hide content until auth is verified */
         body.loading .button-container {
             display: none;
         }
@@ -83,7 +82,6 @@
             pointer-events: auto;
         }
 
-        /* Counter styles */
         #counter-container {
             display: flex;
             gap: 15px;
@@ -139,7 +137,6 @@
             pointer-events: none;
         }
 
-        /* Logout button */
         #logout-btn {
             padding: 24px 24px;
             border-radius: 60px;
@@ -152,7 +149,7 @@
             display: none;
         }
 
-        /* ===== BUTTON / LAYER SETUP ===== */
+        /* ===== BUTTON LAYERS ===== */
         .button-container {
             position: relative;
             width: 100vw;
@@ -174,7 +171,6 @@
         }
 
         .button-hitbox {
-            /* border: 2px white solid; */
             border-radius: 80%;
             position: absolute;
             width: 600px;
@@ -231,29 +227,28 @@
             opacity: 0;
         }
 
-        /* ===== MOBILE STYLES ===== */
+        /* ===== MOBILE ===== */
         @media (max-width: 768px) {
 
-    .layer {
-        background-size: 200%;
-        background-position: center 38%;
-    }
+            /* 250% = showing ~40% of image width, slightly less zoomed than 300% */
+            .layer {
+                background-size: 250%;
+                background-position: center 38%;
+            }
 
-    .button-hitbox {
-        width: 90vw;
-        max-width: 360px;
-        height: 38vw;
-        max-height: 155px;
-        top: 44%;
-    }
+            .button-hitbox {
+                width: 90vw;
+                max-width: 360px;
+                height: 38vw;
+                max-height: 155px;
+                top: 44%;
+            }
 
-            /* Bottom bar: fixed phone-friendly width, small side breathing room */
             .bottom-bar {
                 width: 360px;
                 height: 130px;
             }
 
-            /* Scale down the counter digits a little so they fit */
             .digit {
                 font-size: 1.1rem;
                 min-width: 28px;
@@ -263,7 +258,6 @@
                 padding: 7px 5px;
             }
 
-            /* Tighten the left/right positioning inside the bar */
             .bottom-bar-left {
                 margin-left: 80px;
                 margin-bottom: 14px;
@@ -275,7 +269,7 @@
             }
         }
 
-        /* Password change form styles */
+        /* ===== PASSWORD CHANGE FORM ===== */
         #password-change-container {
             display: none;
             position: fixed;
@@ -324,7 +318,7 @@
     </style>
 </head>
 <body class="loading">
-    <!-- Password change form (only shown on first login) -->
+
     <div id="password-change-container">
         <h2>Welcome to the <strong>Instant Success Premium Portal</strong>! </h2>
         <h2>You have been provisionally granted a year-long membership to the <strong>Instant Success Premium BLACK ® Customer Success Program</strong>, allowing you full access to the range of <strong>Instant Success Premium Products</strong>, including the <strong>Instant Success Luxury Lite "Savor Success"</strong> line of bite-sized <strong>LUXURY LINKS</strong>, and <strong>Instant Single Success-NET</strong>, where all successful singles mingle to seek Success – together. 
@@ -336,7 +330,6 @@
         </form>
     </div>
 
-    <!-- Main button content -->
     <div class="button-container" id="buttonContainer">
         <div class="layer" id="carpetmask_back"></div>
         <div class="layer" id="buttonhole"></div>
@@ -347,7 +340,6 @@
     </div>
     <div class="button-hitbox" id="buttonHitbox"></div>
 
-    <!-- Fixed bottom bar -->
     <div class="bottom-bar">
         <div class="bottom-bar-bg"></div>
         <div class="bottom-bar-content">
@@ -355,7 +347,6 @@
                 <div id="counter-container">
                     <div class="counter-group">
                         <div class="digit-container" id="minutes-container">
-                            <!-- Digits will be generated dynamically -->
                         </div>
                     </div>
                 </div>
@@ -367,7 +358,6 @@
     </div>
 
     <script>
-        // ===== AUTHENTICATION CHECK =====
         const SUPABASE_URL = 'https://oyaumovuijcflmtakyea.supabase.co'
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95YXVtb3Z1aWpjZmxtdGFreWVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0NDU0ODcsImV4cCI6MjA4NjAyMTQ4N30.U0jydo3wasXUbohcQy6yyrskxLSm2sIEtzcJq382fUE'
     
@@ -375,19 +365,16 @@
 
         async function checkAuth() {
             const { data: { session } } = await supabaseClient.auth.getSession();
-
             if (!session) {
                 window.location.href = 'login.html';
                 return;
             }
-
             const user = session.user;
             if (user.user_metadata?.first_login === true) {
                 document.getElementById('password-change-container').classList.add('show');
                 document.body.classList.remove('loading');
                 return;
             }
-
             document.body.classList.remove('loading');
         }
 
@@ -396,12 +383,10 @@
             passwordForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const newPassword = document.getElementById('new-password').value;
-
                 const { error } = await supabaseClient.auth.updateUser({
                     password: newPassword,
                     data: { first_login: false }
                 });
-
                 if (error) {
                     alert('Error updating password: ' + error.message);
                 } else {
@@ -414,43 +399,21 @@
 
         checkAuth();
 
-        // ===== BUTTON ANIMATION CODE =====
+        // ===== BUTTON =====
         const buttonContainer = document.getElementById('buttonContainer');
         const buttonHitbox = document.getElementById('buttonHitbox');
         let isPressed = false;
-
         const audio = new Audio('success2.mp3');
 
-        buttonHitbox.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            pressButton();
-        });
-
-        document.addEventListener('mouseup', () => {
-            releaseButton();
-        });
-
-        buttonHitbox.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            pressButton();
-        });
-
-        document.addEventListener('touchend', (e) => {
-            releaseButton();
-        });
-
+        buttonHitbox.addEventListener('mousedown', (e) => { e.preventDefault(); pressButton(); });
+        document.addEventListener('mouseup', () => { releaseButton(); });
+        buttonHitbox.addEventListener('touchstart', (e) => { e.preventDefault(); pressButton(); });
+        document.addEventListener('touchend', () => { releaseButton(); });
         buttonHitbox.addEventListener('keydown', (e) => {
-            if ((e.key === ' ' || e.key === 'Enter') && !isPressed) {
-                e.preventDefault();
-                pressButton();
-            }
+            if ((e.key === ' ' || e.key === 'Enter') && !isPressed) { e.preventDefault(); pressButton(); }
         });
-
         document.addEventListener('keyup', (e) => {
-            if (e.key === ' ' || e.key === 'Enter') {
-                e.preventDefault();
-                releaseButton();
-            }
+            if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); releaseButton(); }
         });
 
         function pressButton() {
@@ -471,23 +434,19 @@
 
         buttonHitbox.setAttribute('tabindex', '0');
 
-        // ===== COUNTDOWN TIMER =====
+        // ===== COUNTDOWN =====
         const targetDate = new Date('2027-02-08T22:00:00+13:00');
 
         function updateCounter() {
             const now = new Date();
             const diffMs = targetDate - now;
-            
             if (diffMs <= 0) {
-                const minutesContainer = document.getElementById('minutes-container');
-                minutesContainer.innerHTML = '<span class="digit">0</span>';
+                document.getElementById('minutes-container').innerHTML = '<span class="digit">0</span>';
                 return;
             }
-            
             const totalMinutes = Math.floor(diffMs / 1000 / 60);
             const minutesStr = totalMinutes.toString();
             const minutesContainer = document.getElementById('minutes-container');
-            
             if (minutesContainer.children.length !== minutesStr.length) {
                 minutesContainer.innerHTML = '';
                 for (let i = 0; i < minutesStr.length; i++) {
@@ -497,19 +456,15 @@
                     minutesContainer.appendChild(digitSpan);
                 }
             }
-            
             for (let i = 0; i < minutesStr.length; i++) {
                 const digitElement = document.getElementById(`minute-digit-${i}`);
-                if (digitElement) {
-                    digitElement.textContent = minutesStr[i];
-                }
+                if (digitElement) digitElement.textContent = minutesStr[i];
             }
         }
 
         updateCounter();
         setInterval(updateCounter, 1000);
 
-        // Logout functionality
         document.getElementById('logout-btn').addEventListener('click', async () => {
             await supabaseClient.auth.signOut();
             window.location.href = 'login.html';
